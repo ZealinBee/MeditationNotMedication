@@ -2,7 +2,8 @@
 @port = 5000
 @host = http://{{hostname}}:{{port}}
 
-@token =  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkFETUlOIiwiaWQiOjEyOCwibmFtZSI6IkFETUlOIiwiaW1hZ2UiOiJodHRwczovL2loMS5yZWRidWJibGUubmV0L2ltYWdlLjEwNDYzOTIyOTIuMzM0Ni9zdCxtZWRpdW0sNTA3eDUwNy1wYWQsNjAweDYwMCxmOGY4ZjguanBnIiwicm9sZSI6MSwiaWF0IjoxNzA0NTY1NzA0LCJleHAiOjE3MDQ1NjYzMDR9.gB61Gfbf3X_4ES-mIbf7s3WYovJv1qg5bp_UGzX_A8w
+@token =  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkFETUlOIiwiaWQiOjEyOCwibmFtZSI6IkFETUlOIiwiaW1hZ2UiOiJodHRwczovL2loMS5yZWRidWJibGUubmV0L2ltYWdlLjEwNDYzOTIyOTIuMzM0Ni9zdCxtZWRpdW0sNTA3eDUwNy1wYWQsNjAweDYwMCxmOGY4ZjguanBnIiwicm9sZSI6MSwiaWF0IjoxNzA0NzIwMTM0LCJleHAiOjE3MDQ3MjA3MzR9.wEwJb-XluO0lp45myDr_gZwqqiaTSm5HbnfQUxFquqs
+
 
 
 GET {{host}}
@@ -59,3 +60,12 @@ Content-Type: application/json
 ###
 GET {{host}}/api/users/admin
 Authorization: Bearer {{token}}
+
+###
+PUT {{host}}/api/users/admin/101
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "role":1
+}

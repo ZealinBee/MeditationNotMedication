@@ -55,7 +55,7 @@ const getUser = async (user) => {
     }
 };
 
-//@desc Change user's data except for password
+//@desc Change user's data except for password and role
 const changeUser = async (updatedUser, user) => {
     const query = `UPDATE "user" SET user_name=$1, email=$2, image=$3 WHERE user_id=$4`;
     try {
@@ -112,7 +112,26 @@ const getAllUsers = async () => {
     } catch (error) {
         throw new UserError("UserDatabaseError", error.details ? error.details : "Unexpected database error");
     }
-}
+};
+
+//@desc Changes user's role
+const changeUserRole = async (role, user_id) => {
+    const query = "UPDATE \"user\" SET role=$1 WHERE user_id=$2;"
+    try {
+        if (role !== 0 && role !== 1)
+            throw new UserError("UserDatabaseError", "Passed role value is invalid");
+        
+        const results =  await pool.query(query, [role, user_id]);
+        
+        if (results.rowCount === 0) 
+            throw new UserError("UserDatabaseError", "User doesn't exist");
+
+        return results;
+    } catch (error) {
+        throw new UserError("UserDatabaseError", error.details ? error.details : "Unexpected database error");
+    }
+};
+
 
 //@desc Clears database
 const clearUsers = async () => {
@@ -146,6 +165,7 @@ module.exports = {
     changeUserPassword: changeUserPassword,
     deleteSingleUser: deleteSingleUser,
     getAllUsers: getAllUsers,
+    changeUserRole: changeUserRole,
     clearUsers: clearUsers,
     seedDb: seedDb
 };

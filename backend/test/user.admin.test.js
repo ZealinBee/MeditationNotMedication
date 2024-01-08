@@ -16,11 +16,11 @@ describe("GET /api/users/admin endpoint", () => {
             password:"admin"
         };
 
-        const creationResponse = await request(app)
+        const loginResponse = await request(app)
         .post("/api/users/login")
         .set("Accept", "application/json")
         .send(user);
-        const token = creationResponse.body.token;
+        const token = loginResponse.body.token;
 
         const response = await request(app)
         .get("/api/users/admin")
@@ -46,11 +46,11 @@ describe("GET /api/users/admin endpoint", () => {
             password:"Pa$sw0rd"
         };
 
-        const creationResponse = await request(app)
+        const loginResponse = await request(app)
         .post("/api/users/login")
         .set("Accept", "application/json")
         .send(user);
-        const token = creationResponse.body.token;
+        const token = loginResponse.body.token;
 
         const response = await request(app)
         .get("/api/users/admin")
@@ -59,5 +59,49 @@ describe("GET /api/users/admin endpoint", () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.type).toEqual("AuthenticationError");
         expect(response.body.details).toEqual("No rights to access this endpoint");
+    });
+});
+
+describe("PUT /api/users/admin/:id endpoint", () => {
+    beforeEach(async () => {
+        await userdb.clearUsers();
+        await userdb.seedDb();
+    });
+
+    it("changes user's role", async () => {
+        const user = {
+            email:"ADMIN",
+            password:"admin"
+        };
+
+        const loginResponse = await request(app)
+        .post("/api/users/login")
+        .set("Accept", "application/json")
+        .send(user);
+        const id = loginResponse.body.details.id;
+        const token = loginResponse.body.token;
+
+        const putResponse = await request(app)
+        .put(`/api/users/admin/${id-1}`)
+        .set("authorization", `Bearer ${token}`)
+        .send({"role":1});
+
+        const response =  await request(app)
+        .get("/api/users/admin")
+        .set("authorization", `Bearer ${token}`);
+
+        expect(putResponse.statusCode).toBe(200);
+        expect(response.statusCode).toBe(200);
+        expect(response.body.status).toEqual("success");
+        expect(response.body.details[1].user_id).toBeDefined();
+        expect(response.body.details[1].user_name).toEqual("Roman");
+        expect(response.body.details[1].email).toEqual("RomanZin@gmail.com");
+        expect(response.body.details[1].image).toEqual(DEFAULT_IMAGE);
+        expect(response.body.details[1].role).toEqual(1);
+        expect(response.body.details[0].user_id).toBeDefined();
+        expect(response.body.details[0].user_name).toEqual("ADMIN");
+        expect(response.body.details[0].email).toEqual("ADMIN");
+        expect(response.body.details[0].image).toEqual(DEFAULT_IMAGE);
+        expect(response.body.details[0].role).toEqual(1);
     });
 });
